@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Carrito</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-mono@5.2.7/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --surface-2: #181818;
+            --border: #242424;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #c94c4c;
+            --success: #4ca874;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            height: 64px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar-left { display: flex; align-items: baseline; gap: 1.5rem; }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .btn-back {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+        }
+        .btn-back:hover { color: var(--text); }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.45rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+        .page-title em { font-style: italic; color: var(--gold); }
+        .page-subtitle {
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .cart-list { display: flex; flex-direction: column; }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 1.25rem;
+            align-items: start;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            filter: grayscale(15%);
+        }
+        .cart-item-img-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .cart-item-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 300;
+            margin-bottom: 0.15rem;
+        }
+        .cart-item-cat {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        .cart-item-precios {
+            margin-bottom: 0.75rem;
+            font-family: 'DM Mono', monospace;
+        }
+        .item-precio {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .item-subtotal {
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .qty-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.15s;
+        }
+        .qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .qty-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+            min-width: 20px;
+            text-align: center;
+        }
+        .btn-remove {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .btn-remove:hover { color: var(--danger); }
+
+        /* EMPTY */
+        .empty-cart { padding: 4rem 0; text-align: center; color: var(--muted); }
+        .empty-cart .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-cart p { font-size: 0.85rem; letter-spacing: 0.05em; margin-bottom: 1.5rem; }
+        .btn-seguir {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-seguir:hover { border-color: var(--text); color: var(--text); }
+
+        /* SUMMARY */
+        .summary-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            position: sticky;
+            top: 84px;
+        }
+        .summary-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+        .summary-row .label {
+            color: var(--muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .summary-row .value {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .summary-divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.5rem;
+        }
+        .summary-total .label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .summary-total .value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--gold);
+        }
+
+        #btnPagar {
+            width: 100%;
+            background: var(--gold);
+            border: none;
+            color: #080808;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #btnPagar:hover { background: var(--gold-light); }
+        #btnPagar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        #mensajePago {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 0.75rem;
+            min-height: 1.2rem;
+        }
+        .text-success { color: var(--success); }
+        .text-danger  { color: var(--danger); }
+
+        /* SUCCESS OVERLAY */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8,8,8,0.93);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .success-overlay.show { opacity: 1; pointer-events: all; }
+        .success-icon { font-size: 3rem; margin-bottom: 1.5rem; }
+        .success-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+        .success-sub { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 2rem; }
+        .btn-success-back {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-success-back:hover { background: var(--gold); color: #080808; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <span class="logo">Modaveli</span>
+            <button id="btnVolver" class="btn-back">← Seguir comprando</button>
+        </div>
+        <button id="btnCerrarSesion" class="btn-logout">Cerrar sesión →</button>
+    </nav>
+
+    <div class="main">
+
+        <section>
+            <h1 class="page-title">Mi <em>Carrito</em></h1>
+            <p class="page-subtitle" id="subtituloCarrito">Cargando…</p>
+            <div class="cart-list" id="listaCarrito"></div>
+        </section>
+
+        <aside class="summary-panel">
+            <h2 class="summary-title">Resumen del pedido</h2>
+
+            <div class="summary-row">
+                <span class="label">Productos distintos</span>
+                <span class="value" id="resumenArticulos">—</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total">
+                <span class="label">Total a pagar</span>
+                <span class="value" id="resumenTotal">—</span>
+            </div>
+
+            <button id="btnPagar" disabled>Confirmar pedido →</button>
+            <p id="mensajePago"></p>
+        </aside>
+    </div>
+
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">¡Pedido confirmado!</h2>
+        <p class="success-sub">Tu compra ha sido registrada correctamente.</p>
+        <button class="btn-success-back" id="btnSuccessBack">Volver a la tienda</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/carrito.js"></script>
+</body>
+</html>

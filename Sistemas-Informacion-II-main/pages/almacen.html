@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Almacén</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --surface-2: #181818;
+            --border: #242424;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #c94c4c;
+            --success: #4ca874;
+            --warning: #c9914c;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            height: 60px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand { display: flex; align-items: baseline; gap: 1rem; }
+        .navbar-brand .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            color: var(--gold);
+        }
+        .navbar-brand .section-tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.6rem;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.45rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+        .main {
+            display: grid;
+            grid-template-columns: minmax(520px, 58%) minmax(320px, 42%);
+            height: calc(100vh - 60px);
+        }
+
+        .form-panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 300;
+            margin-bottom: 0.3rem;
+        }
+        .panel-subtitle {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .form-group { margin-bottom: 1.4rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus { border-color: var(--gold); }
+        .form-group select option { background: #111; }
+
+        /* Precio con símbolo € */
+        .input-price-wrapper { position: relative; }
+        .input-price-wrapper input { padding-right: 2.5rem; }
+        .input-price-wrapper::after {
+            content: '€';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .variant-box {
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            padding: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .variant-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            align-items: end;
+        }
+
+        .size-selector-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.6rem;
+        }
+
+        .btn-add-size {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.75rem 0.9rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-add-size:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .selected-sizes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            min-height: 32px;
+            margin-top: 0.5rem;
+        }
+
+        .size-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border: 1px solid var(--border);
+            background: #131313;
+            padding: 0.22rem 0.5rem;
+            font-size: 0.73rem;
+        }
+
+        .btn-remove-size {
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        .btn-remove-size:hover {
+            color: var(--danger);
+        }
+
+        .size-help {
+            color: var(--muted);
+            font-size: 0.68rem;
+            margin-top: 0.45rem;
+        }
+
+        .btn-generate {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.66rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: 0.65rem;
+            cursor: pointer;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-generate:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+        .variants-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.4rem;
+        }
+
+        .variants-table th,
+        .variants-table td {
+            border: 1px solid var(--border);
+            padding: 0.45rem;
+            font-size: 0.76rem;
+            text-align: left;
+        }
+
+        .variants-table th {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.62rem;
+        }
+
+        .variants-table input {
+            width: 100%;
+            background: #121212;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.35rem 0.5rem;
+            font-size: 0.78rem;
+        }
+
+        .btn-del-variant {
+            border: 1px solid var(--danger);
+            background: transparent;
+            color: var(--danger);
+            font-size: 0.66rem;
+            padding: 0.25rem 0.45rem;
+            cursor: pointer;
+        }
+
+        #btnGuardar {
+            width: 100%;
+            background: var(--gold);
+            border: none;
+            color: #080808;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        #btnGuardar:hover { background: var(--gold-light); }
+        #btnGuardar.btn-success { background: var(--success); color: #fff; }
+        #btnGuardar.btn-success:hover { opacity: 0.85; }
+
+        /* TABLE PANEL */
+        .table-panel { padding: 2.5rem; overflow-y: auto; }
+        .table-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .table-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 300;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { border-bottom: 1px solid var(--border); }
+        thead th {
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 400;
+        }
+        tbody tr { border-bottom: 1px solid rgba(36,36,36,0.6); transition: background 0.15s; }
+        tbody tr:hover { background: rgba(201,168,76,0.03); }
+        tbody td { padding: 1rem; font-size: 0.88rem; font-weight: 300; }
+
+        /* Precio en tabla */
+        tbody td strong {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            color: var(--gold);
+        }
+
+        .btn-warning { background: transparent !important; border: 1px solid #c9914c !important; color: #c9914c !important; font-size: 0.75rem; padding: 0.3rem 0.65rem; cursor: pointer; border-radius: 0; margin-right: 0.3rem; }
+        .btn-danger  { background: transparent !important; border: 1px solid #c94c4c !important; color: #c94c4c !important; font-size: 0.75rem; padding: 0.3rem 0.65rem; cursor: pointer; border-radius: 0; }
+        .btn-warning:hover { background: rgba(201,145,76,0.1) !important; }
+        .btn-danger:hover  { background: rgba(201,76,76,0.1) !important; }
+
+        /* Stock badge */
+        .badge { display: inline-block; padding: 0.2rem 0.65rem; font-size: 0.7rem; font-weight: 500; background: rgba(201,168,76,0.12); color: var(--gold); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        @media (max-width: 1100px) {
+            .main {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .form-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .variant-row,
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="logo">Modaveli</span>
+            <span class="section-tag">Almacén</span>
+        </div>
+        <button id="btnCerrarSesion" class="btn-logout">Salir →</button>
+    </nav>
+
+    <div class="main">
+
+        <!-- FORMULARIO -->
+        <aside class="form-panel">
+            <h2 class="panel-title">Nuevo Producto</h2>
+            <p class="panel-subtitle">Inventario</p>
+
+            <div class="form-group">
+                <label>Nombre del producto</label>
+                <input type="text" id="txtNombre" placeholder="Ej: Camiseta básica negra">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="cmbCategoria">
+                        <option value="" disabled selected>Seleccionar…</option>
+                        <option value="Camisetas">Camisetas</option>
+                        <option value="Pantalones">Pantalones</option>
+                        <option value="Sudaderas">Sudaderas</option>
+                        <option value="Zapatos">Zapatillas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>URL de imagen</label>
+                    <input type="text" id="txtImagen" placeholder="https://…">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Precio de venta</label>
+                <div class="input-price-wrapper">
+                    <input type="number" id="txtPrecio" placeholder="0.00" min="0" step="0.01">
+                </div>
+            </div>
+
+            <section class="variant-box">
+                <div class="variant-row">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Tallas</label>
+                        <div class="size-selector-row">
+                            <select id="cmbTallaSimple"></select>
+                            <button type="button" id="btnAgregarTalla" class="btn-add-size">Anadir talla</button>
+                        </div>
+                        <div id="listaTallasSeleccionadas" class="selected-sizes"></div>
+                        <p class="size-help">Elige una talla y pulsa "Anadir talla".</p>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Colores (separados por coma)</label>
+                        <input type="text" id="txtColores" placeholder="Negro, Blanco, Azul">
+                    </div>
+                </div>
+
+                <button type="button" id="btnGenerarVariantes" class="btn-generate">Generar combinaciones talla-color</button>
+
+                <table class="variants-table">
+                    <thead>
+                        <tr>
+                            <th>Talla</th>
+                            <th>Color</th>
+                            <th>Stock</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaVariantes"></tbody>
+                </table>
+            </section>
+
+            <button id="btnGuardar">Guardar producto</button>
+        </aside>
+
+        <!-- TABLA -->
+        <section class="table-panel">
+            <div class="table-header">
+                <h2 class="table-title">Catálogo</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Talla</th>
+                        <th>Stock</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/almacen.js"></script>
+</body>
+</html>

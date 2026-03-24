@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Alta Trabajador</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --border: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #e05252;
+            --success: #4ca874;
+        }
+
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 20% 20%, rgba(201,168,76,0.12), transparent 30%), var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            padding: 1.5rem;
+        }
+
+        .card {
+            width: min(560px, 100%);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+        }
+
+        .eyebrow {
+            font-size: 0.62rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.6rem;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.1rem;
+            font-weight: 300;
+            margin-bottom: 0.4rem;
+        }
+
+        .desc {
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 0.17em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            font-size: 0.95rem;
+            padding: 0.6rem 0;
+            outline: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus { border-bottom-color: var(--gold); }
+        .form-group select option { background: #111; }
+
+        .btn {
+            width: 100%;
+            border: 1px solid var(--gold);
+            background: var(--gold);
+            color: #080808;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.6rem;
+        }
+
+        .btn:hover { background: var(--gold-light); }
+
+        .btn-secondary {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.68rem;
+            padding: 0.75rem;
+            margin-top: 0.6rem;
+            cursor: pointer;
+        }
+
+        #mensajeRegTrab {
+            margin-top: 0.9rem;
+            min-height: 1.2rem;
+            font-size: 0.78rem;
+            text-align: center;
+        }
+
+        .text-danger { color: var(--danger); }
+        .text-success { color: var(--success); }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <p class="eyebrow">App interna</p>
+        <h1>Alta de trabajador</h1>
+        <p class="desc">Crea cuentas internas para personal de tienda. Estas cuentas no pueden entrar al flujo web de clientes.</p>
+
+        <div class="form-group">
+            <label>Correo corporativo</label>
+            <input type="email" id="txtEmailRegTrab" placeholder="nombre@modaveli.com">
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña (mín. 6 caracteres)</label>
+            <input type="password" id="txtPasswordRegTrab" placeholder="••••••">
+        </div>
+
+        <div class="form-group">
+            <label>Rol</label>
+            <select id="cmbRolRegTrab">
+                <option value="mozo">Mozo - Almacen</option>
+                <option value="vendedor">Vendedor - Caja e Historial</option>
+                <option value="encargado_web">Encargado Web - Panel</option>
+            </select>
+        </div>
+
+        <button id="btnRegistrarTrab" class="btn">Crear trabajador</button>
+        <button id="btnVolverLogin" class="btn-secondary">Volver al login</button>
+
+        <p id="mensajeRegTrab"></p>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/registro-trabajador.js"></script>
+</body>
+</html>

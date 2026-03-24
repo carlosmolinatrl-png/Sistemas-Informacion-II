@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modaveli - Web Clientes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --surface-2: #181818;
+            --border: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #f0ece4;
+            --muted: #6b6560;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(201, 168, 76, 0.14), transparent 30%),
+                radial-gradient(circle at 80% 85%, rgba(201, 168, 76, 0.12), transparent 28%),
+                var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            display: grid;
+            place-items: center;
+            padding: 2rem;
+        }
+
+        .card {
+            width: min(860px, 100%);
+            background: linear-gradient(145deg, var(--surface), #0e0e0e);
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            overflow: hidden;
+        }
+
+        .brand {
+            padding: 3rem;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .kicker {
+            font-size: 0.66rem;
+            letter-spacing: 0.3em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 32ch;
+            font-size: 0.9rem;
+        }
+
+        .panel {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.9rem;
+            background: var(--surface-2);
+        }
+
+        .btn {
+            width: 100%;
+            text-decoration: none;
+            text-align: center;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 0.72rem;
+            padding: 0.95rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .btn.primary {
+            background: var(--gold);
+            color: #080808;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--gold-light);
+            color: var(--gold-light);
+        }
+
+        .btn.primary:hover {
+            color: #080808;
+            background: var(--gold-light);
+        }
+
+        .note {
+            margin-top: 0.8rem;
+            color: var(--muted);
+            font-size: 0.75rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 860px) {
+            .card { grid-template-columns: 1fr; }
+            .brand { border-right: none; border-bottom: 1px solid var(--border); }
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <section class="brand">
+            <div>
+                <div class="logo">Modaveli</div>
+                <p class="kicker">Web para clientes</p>
+                <h1>Compra desde<br><em>tu navegador</em></h1>
+                <p>Esta version usa las mismas pantallas del sistema, adaptadas para flujo web de clientes: tienda, carrito, perfil y acceso.</p>
+            </div>
+            <p class="kicker">Temporada 2026</p>
+        </section>
+
+        <section class="panel">
+            <a class="btn primary" href="./pages/cliente.html">Entrar a la tienda</a>
+            <a class="btn" href="./pages/login.html">Iniciar sesion</a>
+            <a class="btn" href="./pages/registro.html">Crear cuenta</a>
+            <p class="note">Puedes mantener Electron para la app interna y usar esta entrada para clientes web.</p>
+        </section>
+    </main>
+</body>
+</html>

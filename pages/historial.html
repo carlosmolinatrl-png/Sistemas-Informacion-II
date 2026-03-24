@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial Completo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-mono@5.2.7/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #080808; --surface: #111111; --border: #242424; --gold: #c9a84c; --text: #f0ece4; --muted: #6b6560; --info: #4c8ec9;}
+        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .navbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; }
+        .brand { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); text-transform: uppercase; }
+        
+        .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase; font-size: 0.85rem;}
+        .btn-outline:hover { background: rgba(201, 168, 76, 0.1); }
+
+        .container { padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2rem; }
+        .panel { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+        .panel-title { color: var(--gold); font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem; text-transform: uppercase; }
+        
+        .filters { display: flex; gap: 2rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+        label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); }
+        select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.75rem; font-family: 'DM Mono', monospace; outline: none; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-family: 'DM Mono', monospace; font-size: 0.9rem;}
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); }
+        .badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; border: 1px solid; }
+        .badge-caja { color: var(--gold); border-color: var(--gold); }
+        .badge-app { color: var(--info); border-color: var(--info); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">Registro de Ventas</div>
+        <button id="btnVolver" class="btn-outline">⬅ Volver a Caja</button>
+    </nav>
+
+    <div class="container">
+        <div class="panel">
+            <h2 class="panel-title">Filtros</h2>
+            <div class="filters">
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="cmbFiltroCategoria">
+                        <option value="todas">Todas</option>
+                        <option value="Camisetas">Camisetas</option>
+                        <option value="Pantalones">Pantalones</option>
+                        <option value="Sudaderas">Sudaderas</option>
+                        <option value="Zapatos">Zapatos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Zona de Venta</label>
+                    <select id="cmbFiltroOrigen">
+                        <option value="todos">Todos</option>
+                        <option value="Caja">Caja Registradora</option>
+                        <option value="App">App del Cliente</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2 class="panel-title">Listado Completo</h2>
+            <table>
+                <thead>
+                    <tr><th>Fecha y Hora</th><th>Pedido</th><th>Categorías</th><th>Origen</th><th>Prendas</th><th>Detalle del Pack</th></tr>
+                </thead>
+                <tbody id="tablaHistorialCompleto"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/historial.js"></script>
+</body>
+</html>

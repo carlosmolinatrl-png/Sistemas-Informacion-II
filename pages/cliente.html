@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Tienda</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --border: #242424;
+            --gold: #c9a84c;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #c94c4c;
+            --success: #4ca874;
+            --info: #4c8ec9;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar-custom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            height: 70px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .navbar-right { display: flex; align-items: center; gap: 1rem; }
+
+        .btn-nav {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-nav:hover { background: rgba(201,168,76,0.1); }
+        .btn-nav.danger { border-color: var(--danger); color: var(--danger); }
+        .btn-nav.danger:hover { background: rgba(201,76,76,0.1); }
+        .btn-nav.info { border-color: var(--info); color: var(--info); }
+        .btn-nav.info:hover { background: rgba(76,142,201,0.1); }
+
+        .cart-btn {
+            position: relative;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+        .cart-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+        .cart-badge {
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            background: var(--gold);
+            color: #080808;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.6rem;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.25s;
+        }
+        .cart-badge.visible { opacity: 1; transform: scale(1); }
+
+        /* --- HERO --- */
+        .hero {
+            padding: 4rem 3rem 3rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; line-height: 1; margin: 0;}
+        .hero h1 em { font-style: italic; color: var(--gold); }
+        .hero-meta { text-align: right; }
+        .hero-meta .season { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+        .hero-meta .desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin: 0;}
+
+        .supervisor-panel {
+            display: none;
+            padding: 1.25rem 3rem 0;
+        }
+        .supervisor-panel.visible { display: block; }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(160px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 0.9rem;
+        }
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.85rem;
+        }
+        .kpi-label {
+            color: var(--muted);
+            font-size: 0.62rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 0.45rem;
+        }
+        .kpi-value {
+            color: var(--gold);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .supervisor-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+            flex-wrap: wrap;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin: 0.7rem 0 0.2rem;
+        }
+
+        .insight-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.75rem 0.8rem;
+            min-height: 180px;
+        }
+
+        .insight-title {
+            color: var(--gold);
+            font-size: 0.64rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 0.55rem;
+        }
+
+        .insight-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 0.45rem;
+            color: var(--text);
+            font-size: 0.77rem;
+            line-height: 1.4;
+        }
+
+        .insight-empty {
+            color: var(--muted);
+        }
+
+        .sup-last-update {
+            color: var(--muted);
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            margin-top: 0.45rem;
+        }
+
+        .shop-layout {
+            display: grid;
+            grid-template-columns: 270px 1fr;
+            gap: 1rem;
+            padding: 0.8rem 3rem 3rem;
+        }
+
+        .filter-sidebar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            height: fit-content;
+            position: sticky;
+            top: 84px;
+        }
+
+        .filter-title {
+            color: var(--gold);
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.9rem;
+        }
+
+        .filter-group { margin-bottom: 1rem; }
+        .filter-group-label {
+            color: var(--muted);
+            font-size: 0.62rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 0.45rem;
+        }
+
+        .filter-check {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.45rem;
+            color: var(--text);
+            font-size: 0.82rem;
+        }
+
+        .filter-check input { accent-color: var(--gold); }
+
+        .size-chip-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(45px, 1fr));
+            gap: 0.4rem;
+        }
+
+        .size-chip {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            padding: 0.35rem 0.2rem;
+            text-align: center;
+            font-size: 0.72rem;
+            cursor: pointer;
+        }
+
+        .size-chip.active {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .filter-actions {
+            border-top: 1px solid var(--border);
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            display: grid;
+            gap: 0.55rem;
+        }
+
+        .result-count {
+            color: var(--muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+        }
+
+        .btn-clear-filters {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.48rem 0.6rem;
+            cursor: pointer;
+        }
+
+        .btn-clear-filters:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-open-filters {
+            display: none;
+            margin: 0.8rem 3rem 0;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            padding: 0.55rem 0.85rem;
+        }
+
+        .btn-filter {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-size: 0.66rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.45rem 0.7rem;
+            cursor: pointer;
+        }
+        .btn-filter.active {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .meta-encargado {
+            border-top: 1px dashed var(--border);
+            margin-top: 0.7rem;
+            padding-top: 0.65rem;
+            font-size: 0.72rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 980px) {
+            .kpi-grid { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
+            .insight-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+        }
+
+        @media (max-width: 980px) {
+            .shop-layout { grid-template-columns: 1fr; padding: 0.8rem 1rem 2rem; }
+            .btn-open-filters { display: inline-block; margin: 0.8rem 1rem 0; }
+            .filter-sidebar { display: none; position: static; }
+            .filter-sidebar.open { display: block; }
+        }
+
+        @media (max-width: 640px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            .insight-grid { grid-template-columns: 1fr; }
+            .supervisor-panel { padding: 1rem 1rem 0; }
+            .catalog-container { padding: 1rem; }
+            .hero { padding: 2rem 1rem 1.5rem; }
+        }
+
+        /* --- CATÁLOGO --- */
+        .catalog-container { padding: 3rem; }
+        
+        #catalogoProductos .card {
+            background: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 0 !important;
+        }
+        #catalogoProductos .card-img-top {
+            height: 260px !important;
+            object-fit: cover;
+            filter: grayscale(20%);
+            transition: filter 0.4s;
+        }
+        #catalogoProductos .card:hover .card-img-top { filter: grayscale(0%); }
+        #catalogoProductos .card-title {
+            font-family: 'Cormorant Garamond', serif !important;
+            font-size: 1.5rem !important;
+            color: var(--text) !important;
+        }
+        #catalogoProductos .producto-precio {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+        #catalogoProductos .btn-primary {
+            background: transparent !important;
+            border: 1px solid var(--gold) !important;
+            color: var(--gold) !important;
+            border-radius: 0 !important;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        #catalogoProductos .btn-primary:hover:not(:disabled) { background: var(--gold) !important; color: #080808 !important; }
+
+        /* --- TOAST --- */
+        .toast-custom {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--surface);
+            border: 1px solid var(--gold);
+            color: var(--text);
+            padding: 0.8rem 1.75rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast-custom.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-custom">
+        <div class="logo">Modaveli</div>
+        
+        <div class="navbar-right">
+            <button id="btnPerfil" class="btn-nav info" style="display: none;">Mi Perfil</button>
+            <button id="btnCarrito" class="cart-btn" style="display: none;">
+                🛒
+                <span id="cartBadge" class="cart-badge">0</span>
+            </button>
+            
+            <div id="authContainer">
+                <button id="btnIrLogin" class="btn-nav">Iniciar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Nueva<br><em>Colección</em></h1>
+        <div class="hero-meta">
+            <p class="season">Temporada 2026</p>
+            <p class="desc">Descubre nuestras últimas<br>novedades y tendencias.</p>
+            <p id="modoRolTag" class="season" style="display:none; margin-top:0.8rem; color: var(--gold);">Modo Encargado Web</p>
+        </div>
+    </div>
+
+    <section id="supervisorPanel" class="supervisor-panel">
+        <div class="kpi-grid">
+            <article class="kpi-card">
+                <p class="kpi-label">Pedidos web hoy</p>
+                <p class="kpi-value" id="kpiPedidosHoy">0</p>
+            </article>
+            <article class="kpi-card">
+                <p class="kpi-label">Ingresos hoy</p>
+                <p class="kpi-value" id="kpiIngresosHoy">0.00 EUR</p>
+            </article>
+            <article class="kpi-card">
+                <p class="kpi-label">Ticket medio</p>
+                <p class="kpi-value" id="kpiTicketMedio">0.00 EUR</p>
+            </article>
+            <article class="kpi-card">
+                <p class="kpi-label">Carritos activos</p>
+                <p class="kpi-value" id="kpiCarritosActivos">0</p>
+            </article>
+        </div>
+
+        <div class="supervisor-filters" id="supervisorFilters">
+            <button class="btn-filter active" data-filter="todos">Todos</button>
+            <button class="btn-filter" data-filter="criticos">Stock critico</button>
+            <button class="btn-filter" data-filter="sin-stock">Sin stock</button>
+            <button class="btn-filter" data-filter="top-ventas">Top ventas 24h</button>
+        </div>
+
+        <div class="insight-grid">
+            <article class="insight-card">
+                <p class="insight-title">Alertas operativas</p>
+                <ul id="supAlertList" class="insight-list"></ul>
+            </article>
+            <article class="insight-card">
+                <p class="insight-title">Top ventas 24h</p>
+                <ul id="supTopVentasList" class="insight-list"></ul>
+            </article>
+            <article class="insight-card">
+                <p class="insight-title">Mayor reserva en carritos</p>
+                <ul id="supReservasList" class="insight-list"></ul>
+            </article>
+            <article class="insight-card">
+                <p class="insight-title">Riesgo de quiebre</p>
+                <ul id="supRiesgoList" class="insight-list"></ul>
+            </article>
+        </div>
+
+        <p id="supLastUpdate" class="sup-last-update">Actualizado --:--</p>
+    </section>
+
+    <button id="btnOpenFilters" class="btn-open-filters">Filtros</button>
+
+    <section class="shop-layout">
+        <aside id="filterSidebar" class="filter-sidebar">
+            <p class="filter-title">Filtros</p>
+
+            <div class="filter-group">
+                <p class="filter-group-label">Categoria</p>
+                <label class="filter-check"><input id="chkCatAll" type="checkbox" checked> Todas</label>
+                <label class="filter-check"><input class="chk-cat" type="checkbox" value="Camisetas"> Camisetas</label>
+                <label class="filter-check"><input class="chk-cat" type="checkbox" value="Pantalones"> Pantalones</label>
+                <label class="filter-check"><input class="chk-cat" type="checkbox" value="Sudaderas"> Sudaderas</label>
+                <label class="filter-check"><input class="chk-cat" type="checkbox" value="Zapatos"> Zapatillas</label>
+            </div>
+
+            <div class="filter-group">
+                <p class="filter-group-label">Tallas</p>
+                <div id="sizeChipGrid" class="size-chip-grid"></div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-check"><input id="chkSoloDisponible" type="checkbox"> Solo disponibles</label>
+            </div>
+
+            <div class="filter-actions">
+                <p id="resultCount" class="result-count">0 resultados</p>
+                <button id="btnClearFilters" type="button" class="btn-clear-filters">Limpiar filtros</button>
+            </div>
+        </aside>
+
+        <div class="catalog-container">
+            <div id="catalogoProductos" class="row g-4 pb-5"></div>
+        </div>
+    </section>
+
+    <div class="toast-custom" id="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/cliente.js"></script>
+</body>
+</html>
