@@ -51,7 +51,7 @@
             color: var(--gold);
         }
 
-        .navbar-right { display: flex; align-items: center; gap: 1rem; }
+        .navbar-right { display: flex; align-items: center; gap: 0.75rem; }
 
         .btn-nav {
             background: transparent;
@@ -68,9 +68,26 @@
         .btn-nav:hover { background: rgba(201,168,76,0.1); }
         .btn-nav.danger { border-color: var(--danger); color: var(--danger); }
         .btn-nav.danger:hover { background: rgba(201,76,76,0.1); }
-        .btn-nav.info { border-color: var(--info); color: var(--info); }
-        .btn-nav.info:hover { background: rgba(76,142,201,0.1); }
 
+        /* --- BOTONES ICONO --- */
+        .icon-btn {
+            position: relative;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .icon-btn:hover        { border-color: var(--gold);   color: var(--gold); }
+        .icon-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+        /* --- CARRITO --- */
         .cart-btn {
             position: relative;
             background: transparent;
@@ -116,231 +133,60 @@
             align-items: flex-end;
             justify-content: space-between;
         }
-        .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; line-height: 1; margin: 0;}
+        .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; line-height: 1; margin: 0; }
         .hero h1 em { font-style: italic; color: var(--gold); }
         .hero-meta { text-align: right; }
         .hero-meta .season { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-        .hero-meta .desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin: 0;}
+        .hero-meta .desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin: 0; }
 
-        .supervisor-panel {
-            display: none;
-            padding: 1.25rem 3rem 0;
-        }
+        /* --- SUPERVISOR --- */
+        .supervisor-panel { display: none; padding: 1.25rem 3rem 0; }
         .supervisor-panel.visible { display: block; }
 
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(160px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 0.9rem;
-        }
-        .kpi-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 0.85rem;
-        }
-        .kpi-label {
-            color: var(--muted);
-            font-size: 0.62rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            margin-bottom: 0.45rem;
-        }
-        .kpi-value {
-            color: var(--gold);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            line-height: 1;
-        }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 0.9rem; }
+        .kpi-card { background: var(--surface); border: 1px solid var(--border); padding: 0.85rem; }
+        .kpi-label { color: var(--muted); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.45rem; }
+        .kpi-value { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; line-height: 1; }
 
-        .supervisor-filters {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.35rem;
-            flex-wrap: wrap;
-        }
+        .supervisor-filters { display: flex; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap; }
 
-        .insight-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(180px, 1fr));
-            gap: 0.75rem;
-            margin: 0.7rem 0 0.2rem;
-        }
+        .insight-grid { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 0.75rem; margin: 0.7rem 0 0.2rem; }
+        .insight-card { background: var(--surface); border: 1px solid var(--border); padding: 0.75rem 0.8rem; min-height: 180px; }
+        .insight-title { color: var(--gold); font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.55rem; }
+        .insight-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; color: var(--text); font-size: 0.77rem; line-height: 1.4; }
+        .insight-empty { color: var(--muted); }
+        .sup-last-update { color: var(--muted); font-size: 0.65rem; letter-spacing: 0.08em; margin-top: 0.45rem; }
 
-        .insight-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 0.75rem 0.8rem;
-            min-height: 180px;
-        }
+        /* --- SHOP LAYOUT --- */
+        .shop-layout { display: grid; grid-template-columns: 270px 1fr; gap: 1rem; padding: 0.8rem 3rem 3rem; }
 
-        .insight-title {
-            color: var(--gold);
-            font-size: 0.64rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            margin-bottom: 0.55rem;
-        }
-
-        .insight-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            gap: 0.45rem;
-            color: var(--text);
-            font-size: 0.77rem;
-            line-height: 1.4;
-        }
-
-        .insight-empty {
-            color: var(--muted);
-        }
-
-        .sup-last-update {
-            color: var(--muted);
-            font-size: 0.65rem;
-            letter-spacing: 0.08em;
-            margin-top: 0.45rem;
-        }
-
-        .shop-layout {
-            display: grid;
-            grid-template-columns: 270px 1fr;
-            gap: 1rem;
-            padding: 0.8rem 3rem 3rem;
-        }
-
-        .filter-sidebar {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            height: fit-content;
-            position: sticky;
-            top: 84px;
-        }
-
-        .filter-title {
-            color: var(--gold);
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 0.9rem;
-        }
-
+        .filter-sidebar { background: var(--surface); border: 1px solid var(--border); padding: 1rem; height: fit-content; position: sticky; top: 84px; }
+        .filter-title { color: var(--gold); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.9rem; }
         .filter-group { margin-bottom: 1rem; }
-        .filter-group-label {
-            color: var(--muted);
-            font-size: 0.62rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            margin-bottom: 0.45rem;
-        }
-
-        .filter-check {
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-            margin-bottom: 0.45rem;
-            color: var(--text);
-            font-size: 0.82rem;
-        }
-
+        .filter-group-label { color: var(--muted); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.45rem; }
+        .filter-check { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.45rem; color: var(--text); font-size: 0.82rem; }
         .filter-check input { accent-color: var(--gold); }
 
-        .size-chip-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(45px, 1fr));
-            gap: 0.4rem;
-        }
+        .size-chip-grid { display: grid; grid-template-columns: repeat(4, minmax(45px, 1fr)); gap: 0.4rem; }
+        .size-chip { border: 1px solid var(--border); background: transparent; color: var(--muted); padding: 0.35rem 0.2rem; text-align: center; font-size: 0.72rem; cursor: pointer; }
+        .size-chip.active { border-color: var(--gold); color: var(--gold); }
 
-        .size-chip {
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--muted);
-            padding: 0.35rem 0.2rem;
-            text-align: center;
-            font-size: 0.72rem;
-            cursor: pointer;
-        }
+        .filter-actions { border-top: 1px solid var(--border); margin-top: 0.8rem; padding-top: 0.8rem; display: grid; gap: 0.55rem; }
+        .result-count { color: var(--muted); font-size: 0.72rem; letter-spacing: 0.06em; }
+        .btn-clear-filters { border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.48rem 0.6rem; cursor: pointer; }
+        .btn-clear-filters:hover { border-color: var(--gold); color: var(--gold); }
 
-        .size-chip.active {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
+        .btn-open-filters { display: none; margin: 0.8rem 3rem 0; border: 1px solid var(--gold); color: var(--gold); background: transparent; letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.68rem; padding: 0.55rem 0.85rem; }
 
-        .filter-actions {
-            border-top: 1px solid var(--border);
-            margin-top: 0.8rem;
-            padding-top: 0.8rem;
-            display: grid;
-            gap: 0.55rem;
-        }
+        .btn-filter { border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.45rem 0.7rem; cursor: pointer; }
+        .btn-filter.active { border-color: var(--gold); color: var(--gold); }
 
-        .result-count {
-            color: var(--muted);
-            font-size: 0.72rem;
-            letter-spacing: 0.06em;
-        }
+        .meta-encargado { border-top: 1px dashed var(--border); margin-top: 0.7rem; padding-top: 0.65rem; font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
 
-        .btn-clear-filters {
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text);
-            font-size: 0.68rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            padding: 0.48rem 0.6rem;
-            cursor: pointer;
-        }
-
-        .btn-clear-filters:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
-        .btn-open-filters {
-            display: none;
-            margin: 0.8rem 3rem 0;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            background: transparent;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            font-size: 0.68rem;
-            padding: 0.55rem 0.85rem;
-        }
-
-        .btn-filter {
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--muted);
-            font-size: 0.66rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            padding: 0.45rem 0.7rem;
-            cursor: pointer;
-        }
-        .btn-filter.active {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
-        .meta-encargado {
-            border-top: 1px dashed var(--border);
-            margin-top: 0.7rem;
-            padding-top: 0.65rem;
-            font-size: 0.72rem;
-            color: var(--muted);
-            line-height: 1.5;
-        }
-
+        /* --- RESPONSIVE --- */
         @media (max-width: 980px) {
             .kpi-grid { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
             .insight-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
-        }
-
-        @media (max-width: 980px) {
             .shop-layout { grid-template-columns: 1fr; padding: 0.8rem 1rem 2rem; }
             .btn-open-filters { display: inline-block; margin: 0.8rem 1rem 0; }
             .filter-sidebar { display: none; position: static; }
@@ -357,7 +203,7 @@
 
         /* --- CATÁLOGO --- */
         .catalog-container { padding: 3rem; }
-        
+
         #catalogoProductos .card {
             background: var(--surface) !important;
             border: 1px solid var(--border) !important;
@@ -380,6 +226,13 @@
             font-size: 1.5rem;
             color: var(--gold);
         }
+
+        /* Footer de la tarjeta — fondo oscuro para eliminar el blanco */
+        #catalogoProductos .card-footer {
+            background: var(--surface) !important;
+            border-top: 1px solid var(--border) !important;
+        }
+
         #catalogoProductos .btn-primary {
             background: transparent !important;
             border: 1px solid var(--gold) !important;
@@ -388,7 +241,10 @@
             letter-spacing: 0.1em;
             text-transform: uppercase;
         }
-        #catalogoProductos .btn-primary:hover:not(:disabled) { background: var(--gold) !important; color: #080808 !important; }
+        #catalogoProductos .btn-primary:hover:not(:disabled) {
+            background: var(--gold) !important;
+            color: #080808 !important;
+        }
 
         /* --- TOAST --- */
         .toast-custom {
@@ -412,14 +268,25 @@
 
     <nav class="navbar-custom">
         <div class="logo">Modaveli</div>
-        
+
         <div class="navbar-right">
-            <button id="btnPerfil" class="btn-nav info" style="display: none;">Mi Perfil</button>
-            <button id="btnCarrito" class="cart-btn" style="display: none;">
+            <!-- Botón perfil — icono silueta persona -->
+            <button id="btnPerfil" class="icon-btn" style="display: none;" title="Mi Perfil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </button>
+
+            <!-- Botón carrito -->
+            <button id="btnCarrito" class="cart-btn" style="display: none;" title="Mi Carrito">
                 🛒
                 <span id="cartBadge" class="cart-badge">0</span>
             </button>
-            
+
+            <!-- Contenedor login / cerrar sesión -->
             <div id="authContainer">
                 <button id="btnIrLogin" class="btn-nav">Iniciar Sesión</button>
             </div>

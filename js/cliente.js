@@ -172,8 +172,7 @@ function renderCatalogo(productos = []) {
                             data-categoria="${dato.categoria}"
                             data-talla="${talla}"
                             data-imagen="${urlImagen}"
-                            data-precio="${dato.precio || 0}"
-                            >
+                            data-precio="${dato.precio || 0}">
                             ${stockNum === 0 ? 'Ver producto (agotado)' : 'Ver producto'}
                         </button>
                     </div>
@@ -198,20 +197,12 @@ function renderCatalogo(productos = []) {
 
 function filtrarProductosSupervisor(productos = []) {
     if (!modoEncargadoWeb) return productos;
-
-    if (filtroSupervisor === 'criticos') {
-        return productos.filter((p) => (Number(p.stock) || 0) > 0 && (Number(p.stock) || 0) <= 5);
-    }
-
-    if (filtroSupervisor === 'sin-stock') {
-        return productos.filter((p) => (Number(p.stock) || 0) === 0);
-    }
-
+    if (filtroSupervisor === 'criticos') return productos.filter((p) => (Number(p.stock) || 0) > 0 && (Number(p.stock) || 0) <= 5);
+    if (filtroSupervisor === 'sin-stock') return productos.filter((p) => (Number(p.stock) || 0) === 0);
     if (filtroSupervisor === 'top-ventas') {
         const top = [...productos].sort((a, b) => (ventas24hPorProducto.get(b.id) || 0) - (ventas24hPorProducto.get(a.id) || 0));
         return top.filter((p) => (ventas24hPorProducto.get(p.id) || 0) > 0).slice(0, 12);
     }
-
     return productos;
 }
 
@@ -222,7 +213,6 @@ function filtrarPorCategoria(productos = []) {
 
 function filtrarPorTalla(productos = []) {
     if (filtroTallas.size === 0) return productos;
-
     return productos.filter((p) => {
         if (Array.isArray(p.tallasDisponibles) && p.tallasDisponibles.length > 0) {
             return p.tallasDisponibles.some((t) => filtroTallas.has(normalizarTalla(t)));
@@ -306,15 +296,12 @@ function actualizarPanelSupervisorDetallado() {
     renderListaSupervisor(supReservasList, topReservas, 'Sin carritos con reservas activas');
     renderListaSupervisor(supRiesgoList, riesgo, 'No hay riesgo de quiebre con demanda activa');
 
-    if (supLastUpdate) {
-        supLastUpdate.textContent = `Actualizado ${formatearHora()}`;
-    }
+    if (supLastUpdate) supLastUpdate.textContent = `Actualizado ${formatearHora()}`;
 }
 
 function esDentro24h(fechaMs) {
     if (!fechaMs) return false;
-    const ahora = Date.now();
-    return ahora - fechaMs <= 24 * 60 * 60 * 1000;
+    return Date.now() - fechaMs <= 24 * 60 * 60 * 1000;
 }
 
 function esHoy(fechaMs) {
@@ -331,18 +318,14 @@ function iniciarMetricasSupervisor() {
     onSnapshot(collection(db, 'carritos'), (snapshot) => {
         const mapaReservado = new Map();
         let activos = 0;
-
         snapshot.forEach((docSnap) => {
             const items = docSnap.data().items || [];
             if (items.length > 0) activos += 1;
-
             items.forEach((item) => {
                 const qty = Number(item.cantidad) || 0;
-                const previo = mapaReservado.get(item.productoId) || 0;
-                mapaReservado.set(item.productoId, previo + qty);
+                mapaReservado.set(item.productoId, (mapaReservado.get(item.productoId) || 0) + qty);
             });
         });
-
         reservadoPorProducto = mapaReservado;
         carritosActivos = activos;
         actualizarKpisSupervisor();
@@ -353,33 +336,22 @@ function iniciarMetricasSupervisor() {
         const ventas24 = new Map();
         let hoyPedidos = 0;
         let hoyIngresos = 0;
-
         snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             if (data.origen !== 'App') return;
-
             const fechaMs = data.fecha ? data.fecha.toDate().getTime() : null;
             const items = Array.isArray(data.items) ? data.items : [];
-
-            if (esHoy(fechaMs)) {
-                hoyPedidos += 1;
-                hoyIngresos += Number(data.total) || 0;
-            }
-
+            if (esHoy(fechaMs)) { hoyPedidos += 1; hoyIngresos += Number(data.total) || 0; }
             if (esDentro24h(fechaMs)) {
                 items.forEach((item) => {
-                    const qty = Number(item.cantidad) || 0;
-                    const previo = ventas24.get(item.productoId) || 0;
-                    ventas24.set(item.productoId, previo + qty);
+                    ventas24.set(item.productoId, (ventas24.get(item.productoId) || 0) + (Number(item.cantidad) || 0));
                 });
             }
         });
-
         ventas24hPorProducto = ventas24;
         pedidosHoy = hoyPedidos;
         ingresosHoy = hoyIngresos;
         ticketMedioHoy = hoyPedidos > 0 ? hoyIngresos / hoyPedidos : 0;
-
         actualizarKpisSupervisor();
         renderCatalogo(productosActuales);
     });
@@ -392,7 +364,6 @@ function guardarCatalogoCache(productos) {
 function renderCatalogoDesdeCache() {
     const cacheRaw = localStorage.getItem(CATALOGO_CACHE_KEY);
     if (!cacheRaw) return;
-
     try {
         const cache = JSON.parse(cacheRaw);
         if (Array.isArray(cache) && cache.length > 0) {
@@ -405,7 +376,7 @@ function renderCatalogoDesdeCache() {
     }
 }
 
-// --- 1. CARGAR CATÁLOGO DE PRODUCTOS (¡Siempre primero!) ---
+// --- 1. CARGAR CATÁLOGO ---
 renderCatalogoDesdeCache();
 
 try {
@@ -413,11 +384,7 @@ try {
         collection(db, "productos"),
         (snapshot) => {
             const productos = [];
-
-            snapshot.forEach((documento) => {
-                productos.push({ id: documento.id, ...documento.data() });
-            });
-
+            snapshot.forEach((documento) => { productos.push({ id: documento.id, ...documento.data() }); });
             guardarCatalogoCache(productos);
             productosActuales = productos;
             actualizarChipsTalla();
@@ -437,17 +404,11 @@ try {
 onAuthStateChanged(auth, async (user) => {
     try {
         if (user) {
-            usuarioActual = user; 
-            
-            // Buscamos su rol
+            usuarioActual = user;
             const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-            let rol = "cliente"; // Por defecto asumimos que es cliente
-            
-            if (userDoc.exists() && userDoc.data().rol) {
-                rol = userDoc.data().rol;
-            }
-            
-            // En la web publica puede entrar cliente o encargado_web
+            let rol = "cliente";
+            if (userDoc.exists() && userDoc.data().rol) rol = userDoc.data().rol;
+
             if (!esAppEscritorio && rol !== 'cliente' && rol !== 'encargado_web') {
                 await signOut(auth);
                 ipcRenderer.send('cambiar-pagina', 'login.html');
@@ -455,32 +416,30 @@ onAuthStateChanged(auth, async (user) => {
             }
 
             modoEncargadoWeb = rol === 'encargado_web';
-            if (modoRolTag) {
-                modoRolTag.style.display = modoEncargadoWeb ? 'block' : 'none';
-            }
-            if (supervisorPanel) {
-                supervisorPanel.classList.toggle('visible', modoEncargadoWeb);
-            }
-
-            if (modoEncargadoWeb) {
-                iniciarMetricasSupervisor();
-                actualizarKpisSupervisor();
-            }
+            if (modoRolTag) modoRolTag.style.display = modoEncargadoWeb ? 'block' : 'none';
+            if (supervisorPanel) supervisorPanel.classList.toggle('visible', modoEncargadoWeb);
+            if (modoEncargadoWeb) { iniciarMetricasSupervisor(); actualizarKpisSupervisor(); }
 
             if (rol === 'vendedor' && esAppEscritorio) {
                 ipcRenderer.send('cambiar-pagina', 'ventas.html');
             } else if (rol === 'mozo' && esAppEscritorio) {
                 ipcRenderer.send('cambiar-pagina', 'almacen.html');
             } else {
-                // ES CLIENTE: Activamos la interfaz de cliente
                 btnCarrito.style.display = 'flex';
-                if (btnPerfil) {
-                    btnPerfil.style.display = 'inline-flex';
-                }
+                if (btnPerfil) btnPerfil.style.display = 'inline-flex';
                 escucharCarrito(user.uid);
 
+                // ── Botón cerrar sesión como icono ──
                 authContainer.innerHTML = `
-                    <button id="btnCerrarSesion" class="btn-nav danger">Cerrar Sesión</button>
+                    <button id="btnCerrarSesion" class="icon-btn danger" title="Cerrar sesión">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.5"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </button>
                 `;
 
                 document.getElementById('btnCerrarSesion').addEventListener('click', async () => {
@@ -489,13 +448,9 @@ onAuthStateChanged(auth, async (user) => {
                 });
             }
         } else {
-            // NO HAY SESIÓN INICIADA
             usuarioActual = null;
             btnCarrito.style.display = 'none';
-            if (btnPerfil) {
-                btnPerfil.style.display = 'none';
-            }
-            
+            if (btnPerfil) btnPerfil.style.display = 'none';
             authContainer.innerHTML = `
                 <button id="btnIrLogin" class="btn-nav">Iniciar Sesión</button>
             `;
@@ -512,30 +467,20 @@ if (supervisorFilters) {
     supervisorFilters.addEventListener('click', (event) => {
         const btn = event.target.closest('.btn-filter');
         if (!btn) return;
-
         filtroSupervisor = btn.dataset.filter || 'todos';
-
         document.querySelectorAll('.btn-filter').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
-
         renderCatalogo(productosActuales);
     });
 }
 
 if (btnOpenFilters && filterSidebar) {
-    btnOpenFilters.addEventListener('click', () => {
-        filterSidebar.classList.toggle('open');
-    });
+    btnOpenFilters.addEventListener('click', () => { filterSidebar.classList.toggle('open'); });
 }
 
 if (chkCatAll) {
     chkCatAll.addEventListener('change', () => {
-        if (chkCatAll.checked) {
-            filtroCategorias.clear();
-            chkCategorias.forEach((chk) => {
-                chk.checked = false;
-            });
-        }
+        if (chkCatAll.checked) { filtroCategorias.clear(); chkCategorias.forEach((chk) => { chk.checked = false; }); }
         actualizarChipsTalla();
         renderCatalogo(productosActuales);
     });
@@ -543,17 +488,9 @@ if (chkCatAll) {
 
 chkCategorias.forEach((chk) => {
     chk.addEventListener('change', () => {
-        if (chk.checked) {
-            filtroCategorias.add(chk.value);
-            if (chkCatAll) chkCatAll.checked = false;
-        } else {
-            filtroCategorias.delete(chk.value);
-        }
-
-        if (filtroCategorias.size === 0 && chkCatAll) {
-            chkCatAll.checked = true;
-        }
-
+        if (chk.checked) { filtroCategorias.add(chk.value); if (chkCatAll) chkCatAll.checked = false; }
+        else { filtroCategorias.delete(chk.value); }
+        if (filtroCategorias.size === 0 && chkCatAll) chkCatAll.checked = true;
         actualizarChipsTalla();
         renderCatalogo(productosActuales);
     });
@@ -563,16 +500,10 @@ if (sizeChipGrid) {
     sizeChipGrid.addEventListener('click', (event) => {
         const btn = event.target.closest('.size-chip');
         if (!btn) return;
-
         const talla = btn.dataset.size;
         if (!talla) return;
-
-        if (filtroTallas.has(talla)) {
-            filtroTallas.delete(talla);
-        } else {
-            filtroTallas.add(talla);
-        }
-
+        if (filtroTallas.has(talla)) filtroTallas.delete(talla);
+        else filtroTallas.add(talla);
         actualizarChipsTalla();
         renderCatalogo(productosActuales);
     });
@@ -590,13 +521,9 @@ if (btnClearFilters) {
         filtroCategorias.clear();
         filtroTallas.clear();
         filtroSoloDisponible = false;
-
         if (chkCatAll) chkCatAll.checked = true;
-        chkCategorias.forEach((chk) => {
-            chk.checked = false;
-        });
+        chkCategorias.forEach((chk) => { chk.checked = false; });
         if (chkSoloDisponible) chkSoloDisponible.checked = false;
-
         actualizarChipsTalla();
         renderCatalogo(productosActuales);
     });
@@ -604,7 +531,7 @@ if (btnClearFilters) {
 
 actualizarChipsTalla();
 
-// --- 3. ESCUCHAR CARRITO (Badge numérico) ---
+// --- 3. CARRITO (Badge) ---
 function escucharCarrito(uid) {
     try {
         const carritoRef = doc(db, "carritos", uid);
@@ -628,23 +555,17 @@ function escucharCarrito(uid) {
 catalogo.addEventListener('click', async (e) => {
     const btn = e.target.closest('.btn-ver-producto');
     if (!btn) return;
-
     const productoId = btn.dataset.id;
-    const destino = `producto.html?id=${encodeURIComponent(productoId)}`;
-    window.location.href = destino;
+    window.location.href = `producto.html?id=${encodeURIComponent(productoId)}`;
 });
 
-// --- 5. NAVEGACIÓN Y TOAST ---
+// --- 5. NAVEGACIÓN ---
 if (btnCarrito) {
-    btnCarrito.addEventListener('click', () => {
-        ipcRenderer.send('cambiar-pagina', 'Carrito.html');
-    });
+    btnCarrito.addEventListener('click', () => { ipcRenderer.send('cambiar-pagina', 'Carrito.html'); });
 }
 
 if (btnPerfil) {
-    btnPerfil.addEventListener('click', () => {
-        ipcRenderer.send('cambiar-pagina', 'perfil.html');
-    });
+    btnPerfil.addEventListener('click', () => { ipcRenderer.send('cambiar-pagina', 'perfil.html'); });
 }
 
 function mostrarToast(mensaje) {
