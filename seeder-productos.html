@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modaveli — Seeder de Productos</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #0a0a0a;
+            color: #e8e0d4;
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2.4rem;
+            color: #D4AF37;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.05em;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .cat-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .cat-card .num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #D4AF37;
+        }
+
+        .cat-card .label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.2rem;
+        }
+
+        .btn-main {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            padding: 1rem 2rem;
+            background: #D4AF37;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: opacity 0.2s;
+        }
+
+        .btn-main:hover { opacity: 0.85; }
+        .btn-main:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        #log {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 1.2rem;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+        }
+
+        .log-ok   { color: #4caf7d; }
+        .log-err  { color: #e05252; }
+        .log-info { color: #D4AF37; }
+        .log-head { color: #aaa; }
+
+        .progress-bar-wrapper {
+            background: #1a1a1a;
+            border-radius: 4px;
+            height: 8px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #D4AF37;
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Modaveli — Seeder</h1>
+<p class="subtitle">Carga 40 productos de ejemplo directamente en tu base de datos de Firebase</p>
+
+<div class="summary">
+    <div class="cat-card"><div class="num">10</div><div class="label">Camisetas</div></div>
+    <div class="cat-card"><div class="num">10</div><div class="label">Pantalones</div></div>
+    <div class="cat-card"><div class="num">10</div><div class="label">Sudaderas</div></div>
+    <div class="cat-card"><div class="num">10</div><div class="label">Zapatos</div></div>
+</div>
+
+<div class="progress-bar-wrapper">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<button class="btn-main" id="btnCargar" onclick="cargarProductos()">
+    ▶ Cargar los 40 productos en Firebase
+</button>
+
+<div id="log"><span class="log-head">Esperando para empezar…</span></div>
+
+<!-- Firebase compat -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script>
+// ── Config Firebase ──────────────────────────────────────────────
+const firebaseConfig = {
+    apiKey:            "AIzaSyCQuTwh0_X6Epy3WaEPIMSj8mkCIqBs-XQ",
+    authDomain:        "modaveli.firebaseapp.com",
+    projectId:         "modaveli",
+    storageBucket:     "modaveli.firebasestorage.app",
+    messagingSenderId: "106350303564",
+    appId:             "1:106350303564:web:df06bc0bc151246172d7e9"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ── Helpers para generar variantes ──────────────────────────────
+function generarVariantesRopa(tallas, colores, stockPorVariante = 15) {
+    const variantes = [];
+    for (const talla of tallas) {
+        for (const color of colores) {
+            variantes.push({ talla, color, stock: stockPorVariante });
+        }
+    }
+    return variantes;
+}
+
+function generarVariantesCalzado(tallas, colores, stockPorVariante = 10) {
+    const variantes = [];
+    for (const talla of tallas) {
+        for (const color of colores) {
+            variantes.push({ talla, color, stock: stockPorVariante });
+        }
+    }
+    return variantes;
+}
+
+function stockTotal(variantes) {
+    return variantes.reduce((acc, v) => acc + v.stock, 0);
+}
+
+// ── Catálogo de productos ────────────────────────────────────────
+const TALLAS_ROPA    = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const TALLAS_ZAPATOS = ['38', '39', '40', '41', '42', '43', '44'];
+
+const productos = [
+
+    // ──────────── CAMISETAS ────────────
+    {
+        nombre: 'Camiseta básica negra',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Negro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Negro']),
+        precio: 19.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400'
+    },
+    {
+        nombre: 'Camiseta oversize blanca',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Blanco'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Blanco']),
+        precio: 22.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400'
+    },
+    {
+        nombre: 'Camiseta rayas marineras',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Azul', 'Blanco'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Azul', 'Blanco']),
+        precio: 24.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400'
+    },
+    {
+        nombre: 'Camiseta gráfica estampada',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Gris', 'Negro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Gris', 'Negro']),
+        precio: 27.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=400'
+    },
+    {
+        nombre: 'Camiseta polo slim fit',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Azul marino', 'Verde'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Azul marino', 'Verde']),
+        precio: 34.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=400'
+    },
+    {
+        nombre: 'Camiseta de lino manga corta',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Beige', 'Blanco'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Beige', 'Blanco']),
+        precio: 29.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400'
+    },
+    {
+        nombre: 'Camiseta vintage lavada',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Rojo', 'Azul'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Rojo', 'Azul']),
+        precio: 26.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1527719327859-c6ce80353573?w=400'
+    },
+    {
+        nombre: 'Camiseta henley botones',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Gris marengo'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Gris marengo']),
+        precio: 31.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=400'
+    },
+    {
+        nombre: 'Camiseta tie-dye festival',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Multicolor'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Multicolor']),
+        precio: 23.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400'
+    },
+    {
+        nombre: 'Camiseta térmica interior',
+        categoria: 'Camisetas',
+        coloresDisponibles: ['Negro', 'Blanco'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Negro', 'Blanco']),
+        precio: 18.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400'
+    },
+
+    // ──────────── PANTALONES ────────────
+    {
+        nombre: 'Pantalón chino slim beige',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Beige'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Beige']),
+        precio: 44.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400'
+    },
+    {
+        nombre: 'Vaquero skinny negro',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Negro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Negro']),
+        precio: 49.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400'
+    },
+    {
+        nombre: 'Vaquero straight azul',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Azul denim'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Azul denim']),
+        precio: 52.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400'
+    },
+    {
+        nombre: 'Pantalón cargo verde oliva',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Verde oliva', 'Negro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Verde oliva', 'Negro']),
+        precio: 57.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1608228088998-57828365d486?w=400'
+    },
+    {
+        nombre: 'Pantalón de traje gris',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Gris antracita'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Gris antracita']),
+        precio: 69.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1594938298603-c8148e4e4f6d?w=400'
+    },
+    {
+        nombre: 'Bermuda denim azul',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Azul claro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Azul claro']),
+        precio: 38.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=400'
+    },
+    {
+        nombre: 'Pantalón jogger gris',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Gris'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Gris']),
+        precio: 39.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1556906781-9a412961a28c?w=400'
+    },
+    {
+        nombre: 'Pantalón lino blanco verano',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Blanco', 'Beige'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Blanco', 'Beige']),
+        precio: 47.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1561365452-adb940139ffa?w=400'
+    },
+    {
+        nombre: 'Pantalón cuadros escocés',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Rojo', 'Verde'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Rojo', 'Verde']),
+        precio: 54.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?w=400'
+    },
+    {
+        nombre: 'Pantalón pinzas camel',
+        categoria: 'Pantalones',
+        coloresDisponibles: ['Camel'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Camel']),
+        precio: 62.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400'
+    },
+
+    // ──────────── SUDADERAS ────────────
+    {
+        nombre: 'Sudadera básica gris',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Gris'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Gris']),
+        precio: 39.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400'
+    },
+    {
+        nombre: 'Hoodie negro con capucha',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Negro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Negro']),
+        precio: 54.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=400'
+    },
+    {
+        nombre: 'Sudadera universitaria azul',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Azul marino'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Azul marino']),
+        precio: 49.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=400'
+    },
+    {
+        nombre: 'Sudadera tie-dye pastel',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Rosa', 'Lila'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Rosa', 'Lila']),
+        precio: 44.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1614093302611-8efc4f9d1f6a?w=400'
+    },
+    {
+        nombre: 'Sudadera cropped mujer',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Blanco', 'Rosa'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Blanco', 'Rosa']),
+        precio: 42.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1614093302611-8efc4f9d1f6a?w=400'
+    },
+    {
+        nombre: 'Sudadera cuello redondo burdeos',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Burdeos'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Burdeos']),
+        precio: 41.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400'
+    },
+    {
+        nombre: 'Hoodie oversized beige',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Beige'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Beige']),
+        precio: 58.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=400'
+    },
+    {
+        nombre: 'Sudadera polar interior',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Gris', 'Verde'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Gris', 'Verde']),
+        precio: 52.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1612902456546-06898ee82cde?w=400'
+    },
+    {
+        nombre: 'Sudadera con bolsillo central',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Azul claro'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Azul claro']),
+        precio: 46.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400'
+    },
+    {
+        nombre: 'Sudadera estampado logo',
+        categoria: 'Sudaderas',
+        coloresDisponibles: ['Negro', 'Blanco'],
+        tallasDisponibles: TALLAS_ROPA,
+        variantes: generarVariantesRopa(TALLAS_ROPA, ['Negro', 'Blanco']),
+        precio: 55.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=400'
+    },
+
+    // ──────────── ZAPATOS ────────────
+    {
+        nombre: 'Zapatilla blanca clásica',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Blanco'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Blanco']),
+        precio: 69.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400'
+    },
+    {
+        nombre: 'Deportiva running negra',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Negro'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Negro']),
+        precio: 89.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1556906781-9a412961a28c?w=400'
+    },
+    {
+        nombre: 'Zapatilla chunky multicolor',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Multicolor'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Multicolor']),
+        precio: 109.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400'
+    },
+    {
+        nombre: 'Bota tobillera cuero marrón',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Marrón'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Marrón']),
+        precio: 119.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1638247025967-b4e38f787b76?w=400'
+    },
+    {
+        nombre: 'Mocasín cuero negro',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Negro'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Negro']),
+        precio: 99.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400'
+    },
+    {
+        nombre: 'Sandalia plana verano',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Beige', 'Blanco'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Beige', 'Blanco']),
+        precio: 54.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400'
+    },
+    {
+        nombre: 'Zapatilla lona azul marino',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Azul marino'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Azul marino']),
+        precio: 59.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400'
+    },
+    {
+        nombre: 'Oxford formal negro',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Negro'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Negro']),
+        precio: 129.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=400'
+    },
+    {
+        nombre: 'Deportiva trail montaña',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Gris', 'Verde'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Gris', 'Verde']),
+        precio: 94.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400'
+    },
+    {
+        nombre: 'Bota chelsea camel',
+        categoria: 'Zapatos',
+        coloresDisponibles: ['Camel'],
+        tallasDisponibles: TALLAS_ZAPATOS,
+        variantes: generarVariantesCalzado(TALLAS_ZAPATOS, ['Camel']),
+        precio: 114.99,
+        imagenUrl: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400'
+    }
+];
+
+// ── Función principal ────────────────────────────────────────────
+async function cargarProductos() {
+    const btn = document.getElementById('btnCargar');
+    const log = document.getElementById('log');
+    const bar = document.getElementById('progressBar');
+
+    btn.disabled = true;
+    log.innerHTML = '';
+
+    const total = productos.length;
+    let ok = 0;
+    let err = 0;
+
+    function escribir(msg, clase) {
+        log.innerHTML += `<div class="${clase}">${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    escribir(`▶ Iniciando carga de ${total} productos…`, 'log-info');
+
+    for (let i = 0; i < productos.length; i++) {
+        const p = productos[i];
+        const variantesValidas = p.variantes.filter(v => v.stock >= 0);
+        const stockCalculado   = variantesValidas.reduce((acc, v) => acc + v.stock, 0);
+
+        const doc = {
+            nombre:             p.nombre,
+            categoria:          p.categoria,
+            talla:              p.tallasDisponibles[0] || 'Unica',
+            tallasDisponibles:  p.tallasDisponibles,
+            coloresDisponibles: p.coloresDisponibles,
+            variantes:          variantesValidas,
+            stock:              stockCalculado,
+            imagenUrl:          p.imagenUrl || '',
+            precio:             p.precio,
+            fecha:              new Date()
+        };
+
+        try {
+            await db.collection('productos').add(doc);
+            ok++;
+            escribir(`✔ [${i + 1}/${total}] ${p.nombre} (${p.categoria})`, 'log-ok');
+        } catch (e) {
+            err++;
+            escribir(`✖ [${i + 1}/${total}] Error en "${p.nombre}": ${e.message}`, 'log-err');
+        }
+
+        bar.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
+        // Pequeña pausa para no saturar Firestore
+        await new Promise(r => setTimeout(r, 150));
+    }
+
+    escribir('', '');
+    if (err === 0) {
+        escribir(`✅ ¡Listo! ${ok} productos cargados correctamente.`, 'log-info');
+    } else {
+        escribir(`⚠ Carga completada: ${ok} correctos, ${err} con error.`, 'log-err');
+    }
+
+    btn.textContent  = '✅ Carga completada';
+    btn.style.background = '#4caf7d';
+}
+</script>
+
+</body>
+</html>

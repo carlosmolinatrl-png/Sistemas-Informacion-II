@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Panel de Trabajadores</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-mono@5.2.7/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --surface-2: #181818;
+            --border: #242424;
+            --gold: #c9a84c;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #c94c4c;
+            --success: #4ca874;
+            --info: #4c8ec9;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            padding: 1rem 2rem;
+        }
+
+        .brand {
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-size: 1.45rem;
+        }
+
+        .btn {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 0.55rem 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+
+        .layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.6rem 2rem 2rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .hero {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.4rem;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-size: 2.3rem;
+            line-height: 1;
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 0.9rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+        }
+
+        .label {
+            color: var(--muted);
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .value {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--gold);
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .sub {
+            margin-top: 0.45rem;
+            font-size: 0.74rem;
+            color: var(--muted);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .table-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.2rem;
+        }
+
+        .table-title {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid var(--border); padding: 0.65rem 0.45rem; text-align: left; }
+        th { color: var(--muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        td { font-size: 0.82rem; }
+        .total { color: var(--gold); font-family: 'DM Mono', monospace; }
+
+        .status {
+            display: inline-block;
+            border: 1px solid var(--info);
+            color: var(--info);
+            padding: 0.1rem 0.4rem;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        #estadoConexion {
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-family: 'DM Mono', monospace;
+            margin-top: 0.2rem;
+        }
+
+        @media (max-width: 1100px) {
+            .grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+        }
+
+        @media (max-width: 700px) {
+            .layout { padding: 1rem; }
+            .hero { flex-direction: column; align-items: flex-start; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">Panel Operativo</div>
+        <button id="btnCerrarSesion" class="btn btn-danger">Cerrar sesion</button>
+    </nav>
+
+    <main class="layout">
+        <section class="hero">
+            <div>
+                <h1>Seguimiento de la web de clientes</h1>
+                <p>Vista interna con mas detalle que la experiencia del cliente</p>
+                <div id="estadoConexion"></div>
+            </div>
+            <div class="actions">
+                <span class="status">Solo lectura operativa web</span>
+            </div>
+        </section>
+
+        <section class="grid">
+            <article class="card">
+                <p class="label">Pedidos web hoy</p>
+                <p class="value" id="kpiPedidosHoy">0</p>
+                <p class="sub" id="kpiPedidosHoySub">Actualizando...</p>
+            </article>
+
+            <article class="card">
+                <p class="label">Ingresos web hoy</p>
+                <p class="value" id="kpiIngresosHoy">0.00 EUR</p>
+                <p class="sub" id="kpiTicketMedio">Ticket medio: 0.00 EUR</p>
+            </article>
+
+            <article class="card">
+                <p class="label">Clientes registrados</p>
+                <p class="value" id="kpiClientes">0</p>
+                <p class="sub" id="kpiCarritos">Carritos activos: 0</p>
+            </article>
+
+            <article class="card">
+                <p class="label">Inventario critico</p>
+                <p class="value" id="kpiStockCritico">0</p>
+                <p class="sub">Productos con stock igual o menor a 5</p>
+            </article>
+        </section>
+
+        <section class="table-panel">
+            <h2 class="table-title">Ultimos pedidos web</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Pedido</th>
+                        <th>Cliente</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaPedidosWeb"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/panel-trabajadores.js"></script>
+</body>
+</html>

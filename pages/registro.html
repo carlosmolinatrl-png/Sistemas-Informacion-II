@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Registro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --surface-2: #181818;
+            --border: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #e05252;
+            --success: #4ca874;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 800px;
+            min-height: 560px;
+            border: 1px solid var(--border);
+        }
+
+        /* LEFT — brand strip */
+        .brand-strip {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            color: var(--gold);
+        }
+
+        .brand-roles {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .role-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem;
+            border: 1px solid var(--border);
+        }
+
+        .role-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .role-info .role-name {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text);
+        }
+
+        .role-info .role-desc {
+            font-size: 0.68rem;
+            color: var(--muted);
+            margin-top: 0.15rem;
+        }
+
+        .brand-note {
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+        }
+
+        /* RIGHT — form */
+        .form-area {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .form-eyebrow {
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.45rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 0.6rem 0;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            outline: none;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus { border-bottom-color: var(--gold); }
+        .form-group input::placeholder { color: #333; }
+        .form-group select option { background: #111; }
+
+        #btnRegistrar {
+            width: 100%;
+            background: var(--gold);
+            border: none;
+            color: #080808;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        #btnRegistrar:hover { background: var(--gold-light); }
+
+        #btnVolver {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #btnVolver:hover { border-color: var(--text); color: var(--text); }
+
+        #mensajeReg {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 1rem;
+            min-height: 1.2rem;
+        }
+
+        .text-danger { color: var(--danger) !important; }
+        .text-success { color: var(--success) !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- BRAND STRIP -->
+        <div class="brand-strip">
+            <span class="logo">Modaveli</span>
+
+            <div class="brand-roles">
+                <div class="role-item">
+                    <div class="role-icon">👤</div>
+                    <div class="role-info">
+                        <div class="role-name">Cliente</div>
+                        <div class="role-desc">Accede al catálogo de productos</div>
+                    </div>
+                </div>
+                <div class="role-item">
+                    <div class="role-icon">💵</div>
+                    <div class="role-info">
+                        <div class="role-name">Vendedor</div>
+                        <div class="role-desc">Gestión de caja y ventas</div>
+                    </div>
+                </div>
+                <div class="role-item">
+                    <div class="role-icon">📦</div>
+                    <div class="role-info">
+                        <div class="role-name">Mozo</div>
+                        <div class="role-desc">Control de inventario y almacén</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="brand-note">Cada rol tiene acceso a<br>funcionalidades específicas<br>del sistema.</p>
+        </div>
+
+        <!-- FORM -->
+        <div class="form-area">
+            <p class="form-eyebrow">Sistema Modaveli</p>
+            <h2 class="form-title">Crear<br>Cuenta</h2>
+
+            <div class="form-group">
+                <label>Correo electrónico</label>
+                <input type="email" id="txtEmailReg" placeholder="usuario@correo.com">
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña (mín. 6 caracteres)</label>
+                <input type="password" id="txtPasswordReg" placeholder="••••••">
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de cuenta</label>
+                <input type="text" value="Cliente" disabled>
+            </div>
+
+            <button id="btnRegistrar">Crear Cuenta →</button>
+            <button id="btnVolver">← Volver al Login</button>
+
+            <p id="mensajeReg"></p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/registro.js"></script>
+</body>
+</html>

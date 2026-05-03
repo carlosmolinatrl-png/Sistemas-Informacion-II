@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modaveli - Mi Perfil</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-mono@5.2.5/index.css">
+    <style>
+        :root {
+            --bg:         #080808;
+            --surface:    #111111;
+            --border:     #222222;
+            --gold:       #c9a84c;
+            --gold-light: #e8c97a;
+            --text:       #f0ece4;
+            --muted:      #6b6560;
+            --danger:     #c94c4c;
+            --success:    #4ca874;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.18em;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .nav-actions { display: flex; gap: 0.6rem; }
+        .btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.55rem 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: rgba(201,76,76,0.1); }
+
+        /* ── LAYOUT ── */
+        .container {
+            padding: 2.25rem;
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 1.5rem;
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.4rem;
+        }
+        .title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.7rem;
+            color: var(--gold);
+            margin-bottom: 0.3rem;
+        }
+        .subtitle {
+            font-size: 0.7rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.2rem;
+        }
+        .group { margin-bottom: 1rem; }
+        .group label {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.35rem;
+        }
+        .value {
+            border: 1px solid var(--border);
+            background: #0d0d0d;
+            padding: 0.65rem 0.7rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.84rem;
+            word-break: break-word;
+        }
+        input {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #0d0d0d;
+            color: var(--text);
+            padding: 0.65rem 0.7rem;
+            font-size: 0.84rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        input:focus { outline: none; border-color: var(--gold); }
+        .btn-primary {
+            width: 100%;
+            border: 1px solid var(--gold);
+            color: #080808;
+            background: var(--gold);
+            font-weight: 600;
+        }
+        .btn-primary:hover { background: var(--gold-light); color: #080808; }
+        .feedback {
+            margin-top: 0.65rem;
+            min-height: 1.15rem;
+            font-size: 0.78rem;
+            font-family: 'DM Mono', monospace;
+        }
+        .ok    { color: var(--success); }
+        .error { color: var(--danger); }
+
+        /* ── LISTA DE PEDIDOS ── */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 72vh;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+        .order-card {
+            border: 1px solid var(--border);
+            background: #0d0d0d;
+            padding: 0.95rem;
+            transition: opacity 0.3s;
+        }
+        .order-card.devuelto { opacity: 0.5; border-color: #1a1a1a; }
+
+        .order-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.6rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.55rem;
+            margin-bottom: 0.55rem;
+            align-items: center;
+        }
+        .order-id {
+            font-family: 'DM Mono', monospace;
+            color: var(--muted);
+            font-size: 0.74rem;
+        }
+        .order-date {
+            font-size: 0.76rem;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+        }
+        .order-total {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--gold);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .order-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 0.45rem;
+            font-size: 0.85rem;
+            padding: 0.22rem 0;
+            border-bottom: 1px solid rgba(36,36,36,0.45);
+        }
+        .order-item:last-child { border-bottom: none; }
+
+        /* Badge devuelto */
+        .badge-devuelto {
+            display: inline-block;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 0.15rem 0.45rem;
+        }
+
+        /* ── FOOTER DE TARJETA ── */
+        .order-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.7rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Botón Ver Recibo */
+        .btn-recibo {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.4rem 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-recibo:hover { background: var(--gold); color: #080808; }
+
+        /* Botón Devolución */
+        .btn-devolucion {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.4rem 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-devolucion:hover:not(:disabled) { background: rgba(201,76,76,0.15); }
+        .btn-devolucion:disabled {
+            border-color: #2a2a2a;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .empty {
+            border: 1px dashed var(--border);
+            padding: 1rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        @media (max-width: 980px) {
+            .container { grid-template-columns: 1fr; }
+            .orders-list { max-height: none; }
+            .navbar { padding: 0.85rem 1rem; }
+        }
+
+        /* ════════════════════════════════════════
+           TOAST
+        ════════════════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: 2.2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            padding: 0.85rem 1.8rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 3000;
+            white-space: nowrap;
+            background: #0d0d0d;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.ok-toast  { border: 1px solid var(--success); color: var(--success); }
+        .toast.err-toast { border: 1px solid var(--danger);  color: var(--danger); }
+
+        /* ════════════════════════════════════════
+           MODAL RECIBO
+        ════════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .recibo-modal {
+            background: #0e0e0e;
+            border: 1px solid #2a2724;
+            width: min(640px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .recibo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.4rem;
+            border-bottom: 1px solid #1e1e1e;
+            position: sticky;
+            top: 0;
+            background: #0e0e0e;
+            z-index: 2;
+        }
+        .recibo-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.55rem;
+            color: var(--gold);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .recibo-subtag {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-top: 0.1rem;
+        }
+        .btn-close-modal {
+            background: transparent;
+            border: 1px solid #333;
+            color: var(--muted);
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .btn-close-modal:hover { border-color: var(--danger); color: var(--danger); }
+        .recibo-body {
+            padding: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .recibo-section { border: 1px solid #1c1c1c; padding: 1rem 1.1rem; }
+        .recibo-section-title {
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.7rem;
+        }
+        .recibo-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.22rem 0;
+        }
+        .recibo-row .rlabel { font-size: 0.76rem; color: var(--muted); }
+        .recibo-row .rvalue {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text);
+            text-align: right;
+        }
+        .recibo-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        .recibo-table thead tr { border-bottom: 1px solid #222; }
+        .recibo-table th {
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 0.3rem 0.4rem 0.5rem;
+            text-align: left;
+            font-weight: 400;
+        }
+        .recibo-table th:not(:first-child) { text-align: center; }
+        .recibo-table th:last-child        { text-align: right; }
+        .recibo-table tbody tr { border-bottom: 1px solid #181818; }
+        .recibo-table tbody tr:last-child  { border-bottom: none; }
+        .recibo-table td {
+            padding: 0.5rem 0.4rem;
+            color: var(--text);
+            font-family: 'DM Mono', monospace;
+        }
+        .recibo-table td:not(:first-child) { text-align: center; }
+        .recibo-table td:last-child        { text-align: right; color: var(--gold); }
+        .recibo-table td:first-child       { color: var(--text); font-family: 'DM Sans', sans-serif; }
+        .recibo-total-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.9rem 1.1rem;
+            background: #131313;
+            border: 1px solid #222;
+        }
+        .recibo-total-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .recibo-total-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .recibo-footer-text {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-style: italic;
+            padding: 0.3rem 0 0.5rem;
+        }
+        .recibo-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.6rem;
+            padding: 0.9rem 1.4rem;
+            border-top: 1px solid #1a1a1a;
+            background: #0e0e0e;
+            position: sticky;
+            bottom: 0;
+        }
+        .btn-imprimir {
+            background: var(--gold);
+            border: 1px solid var(--gold);
+            color: #080808;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-imprimir:hover { background: var(--gold-light); }
+        .btn-cerrar-recibo {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-cerrar-recibo:hover { border-color: var(--text); color: var(--text); }
+
+        @media print {
+            .modal-overlay { display: flex !important; position: static; background: white; }
+            .recibo-header, .recibo-actions { position: static; }
+            .btn-close-modal, .recibo-actions { display: none; }
+            .recibo-modal { border: none; max-height: none; }
+            body > *:not(.modal-overlay) { display: none; }
+            .recibo-brand, .recibo-total-value { color: #000 !important; }
+            .recibo-section-title { color: #555 !important; }
+            .rlabel, .rvalue, .recibo-table td,
+            .recibo-table th, .recibo-total-label { color: #333 !important; }
+            .recibo-section, .recibo-total-block { border-color: #ccc !important; }
+            .recibo-table tbody tr { border-color: #eee !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Mi Perfil</div>
+        <div class="nav-actions">
+            <button class="btn" id="btnVolver">Volver a tienda</button>
+            <button class="btn btn-danger" id="btnCerrarSesion">Cerrar sesion</button>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <section class="panel">
+            <h1 class="title">Datos del Cliente</h1>
+            <p class="subtitle">Informacion personal y seguridad</p>
+
+            <div class="group">
+                <label>Nombre</label>
+                <div class="value" id="lblNombre">-</div>
+            </div>
+            <div class="group">
+                <label>Direccion</label>
+                <div class="value" id="lblDireccion">-</div>
+            </div>
+            <div class="group">
+                <label>Correo</label>
+                <div class="value" id="lblCorreo">-</div>
+            </div>
+
+            <div class="group">
+                <label>Actualizar nombre</label>
+                <input type="text" id="txtNombre" placeholder="Nombre completo">
+            </div>
+            <div class="group">
+                <label>Actualizar direccion</label>
+                <input type="text" id="txtDireccion" placeholder="Direccion de entrega">
+            </div>
+            <button class="btn btn-primary" id="btnGuardarPerfil">Guardar datos</button>
+            <p class="feedback" id="msgPerfil"></p>
+
+            <hr style="border-color: var(--border); margin: 1.2rem 0;">
+
+            <div class="group">
+                <label>Nuevo correo</label>
+                <input type="email" id="txtNuevoCorreo" placeholder="nuevo@correo.com">
+            </div>
+            <div class="group">
+                <label>Contrasena actual (requerida)</label>
+                <input type="password" id="txtClaveCorreo" placeholder="Contrasena actual">
+            </div>
+            <button class="btn" id="btnCambiarCorreo">Cambiar correo</button>
+            <p class="feedback" id="msgCorreo"></p>
+
+            <hr style="border-color: var(--border); margin: 1.2rem 0;">
+
+            <div class="group">
+                <label>Contrasena actual</label>
+                <input type="password" id="txtClaveActual" placeholder="Contrasena actual">
+            </div>
+            <div class="group">
+                <label>Nueva contrasena</label>
+                <input type="password" id="txtClaveNueva" placeholder="Minimo 6 caracteres">
+            </div>
+            <button class="btn" id="btnCambiarClave">Cambiar contrasena</button>
+            <p class="feedback" id="msgClave"></p>
+        </section>
+
+        <section class="panel">
+            <h2 class="title">Mis Pedidos</h2>
+            <p class="subtitle">Historial completo de compras</p>
+            <div class="orders-list" id="listaPedidos"></div>
+        </section>
+
+    </main>
+
+    <!-- Toast de notificación -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Modal recibo -->
+    <div class="modal-overlay" id="modalRecibo">
+        <div class="recibo-modal">
+            <div class="recibo-header">
+                <div>
+                    <div class="recibo-brand">Modaveli</div>
+                    <div class="recibo-subtag">Recibo de compra</div>
+                </div>
+                <button class="btn-close-modal" id="btnCerrarRecibo">✕</button>
+            </div>
+
+            <div class="recibo-body">
+                <div class="recibo-section">
+                    <div class="recibo-section-title">Datos del pedido</div>
+                    <div class="recibo-row"><span class="rlabel">Nº Pedido</span><span class="rvalue" id="rPedidoId">—</span></div>
+                    <div class="recibo-row"><span class="rlabel">Fecha</span><span class="rvalue" id="rFecha">—</span></div>
+                    <div class="recibo-row"><span class="rlabel">Hora</span><span class="rvalue" id="rHora">—</span></div>
+                    <div class="recibo-row"><span class="rlabel">Canal</span><span class="rvalue" id="rOrigen">—</span></div>
+                    <div class="recibo-row"><span class="rlabel">Estado</span><span class="rvalue" id="rEstado" style="color:var(--success)">—</span></div>
+                </div>
+
+                <div class="recibo-section">
+                    <div class="recibo-section-title">Datos del cliente</div>
+                    <div class="recibo-row"><span class="rlabel">Nombre</span><span class="rvalue" id="rNombre">—</span></div>
+                    <div class="recibo-row"><span class="rlabel">Correo</span><span class="rvalue" id="rCorreo">—</span></div>
+                    <div class="recibo-row"><span class="rlabel">Dirección</span><span class="rvalue" id="rDireccion">—</span></div>
+                </div>
+
+                <div class="recibo-section">
+                    <div class="recibo-section-title">Artículos</div>
+                    <table class="recibo-table">
+                        <thead>
+                            <tr>
+                                <th>Artículo</th><th>Talla</th><th>Color</th>
+                                <th>Cant.</th><th>P. Unit.</th><th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rTablaItems"></tbody>
+                    </table>
+                </div>
+
+                <div class="recibo-total-block">
+                    <span class="recibo-total-label">Total pagado</span>
+                    <span class="recibo-total-value" id="rTotal">0.00 €</span>
+                </div>
+
+                <p class="recibo-footer-text">
+                    Gracias por tu compra en Modaveli. Este documento acredita la transacción realizada.
+                </p>
+            </div>
+
+            <div class="recibo-actions">
+                <button class="btn-imprimir" id="btnImprimirRecibo">🖨 Imprimir</button>
+                <button class="btn-cerrar-recibo" id="btnCerrarRecibo2">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/perfil.js"></script>
+</body>
+</html>

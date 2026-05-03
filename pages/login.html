@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modaveli - Acceso</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5.2.8/index.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111111;
+            --border: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #f0ece4;
+            --muted: #6b6560;
+            --danger: #e05252;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+        }
+
+        /* LEFT PANEL — decorative */
+        .panel-left {
+            position: relative;
+            background: #0d0d0d;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 3rem;
+            overflow: hidden;
+            border-right: 1px solid var(--border);
+        }
+
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 60% 50% at 30% 40%, rgba(201,168,76,0.08) 0%, transparent 70%),
+                linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%);
+        }
+
+        .brand-mark {
+            position: absolute;
+            top: 3rem;
+            left: 3rem;
+            z-index: 2;
+        }
+
+        .brand-mark .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .brand-mark .tagline {
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+        }
+
+        /* Decorative lines */
+        .deco-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+        }
+
+        .deco-lines .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(201,168,76,0.12);
+            animation: slowRotate 20s linear infinite;
+        }
+        .deco-lines .ring:nth-child(1) { inset: 0; }
+        .deco-lines .ring:nth-child(2) { inset: 30px; border-color: rgba(201,168,76,0.07); animation-duration: 30s; animation-direction: reverse; }
+        .deco-lines .ring:nth-child(3) { inset: 60px; border-color: rgba(201,168,76,0.05); animation-duration: 45s; }
+
+        .deco-lines .cross {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .deco-lines .cross::before, .deco-lines .cross::after {
+            content: '';
+            position: absolute;
+            background: rgba(201,168,76,0.15);
+        }
+        .deco-lines .cross::before { width: 1px; height: 80%; }
+        .deco-lines .cross::after { height: 1px; width: 80%; }
+
+        .deco-dot {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .deco-dot::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(201,168,76,0.6);
+        }
+
+        @keyframes slowRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .panel-left-copy {
+            position: relative;
+            z-index: 2;
+        }
+
+        .panel-left-copy h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .panel-left-copy h2 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .panel-left-copy p {
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+        }
+
+        /* RIGHT PANEL — form */
+        .panel-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+        }
+
+        .form-header {
+            margin-bottom: 3rem;
+        }
+
+        .form-header .eyebrow {
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 0.7rem 0;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 300;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-bottom-color: var(--gold);
+        }
+
+        .form-group input::placeholder {
+            color: #333;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--gold);
+            border: none;
+            color: #080808;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, opacity 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover { background: var(--gold-light); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .form-footer {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .form-footer a {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+        }
+
+        .form-footer a span { color: var(--gold); }
+        .form-footer a:hover { color: var(--text); }
+
+        #mensaje {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 1rem;
+            min-height: 1.2rem;
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel-left">
+        <div class="brand-mark">
+            <div class="logo">Modaveli</div>
+            <div class="tagline">Sistema de Gestión · 2025</div>
+        </div>
+
+        <div class="deco-lines">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="cross"></div>
+            <div class="deco-dot"></div>
+        </div>
+
+        <div class="panel-left-copy">
+            <h2>Gestión<br><em>elegante</em><br>para tu tienda.</h2>
+            <p style="margin-top:1rem;">Control de inventario, ventas<br>y catálogo en un solo lugar.</p>
+        </div>
+    </div>
+
+    <div class="panel-right">
+        <div class="form-header">
+            <p class="eyebrow">Acceso al sistema</p>
+            <h1>Iniciar<br>Sesión</h1>
+        </div>
+
+        <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" id="txtEmail" placeholder="usuario@modaveli.com">
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="txtPassword" placeholder="••••••">
+        </div>
+
+        <button id="btnLogin" class="btn-primary">Entrar →</button>
+
+        <div class="form-footer">
+            <a href="#" id="btnIrRegistro">¿Sin cuenta? <span>Regístrate aquí</span></a>
+        </div>
+
+        <p id="mensaje"></p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script type="module" src="../js/login.js"></script>
+</body>
+</html>

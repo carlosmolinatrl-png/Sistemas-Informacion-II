@@ -1,0 +1,44 @@
+[debug] [2026-04-29T18:31:42.834Z] ----------------------------------------------------------------------
+[debug] [2026-04-29T18:31:42.839Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\matia\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2026-04-29T18:31:42.840Z] CLI Version:   15.15.0
+[debug] [2026-04-29T18:31:42.840Z] Platform:      win32
+[debug] [2026-04-29T18:31:42.840Z] Node Version:  v24.13.0
+[debug] [2026-04-29T18:31:42.840Z] Time:          Wed Apr 29 2026 20:31:42 GMT+0200 (hora de verano de Europa central)
+[debug] [2026-04-29T18:31:42.840Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-29T18:31:45.280Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-29T18:31:45.281Z] > authorizing via signed-in user (899791@unizar.es)
+[debug] [2026-04-29T18:31:45.281Z] [iam] checking project modaveli for permissions ["firebase.projects.get"]
+[debug] [2026-04-29T18:31:45.283Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:45.283Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:45.284Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/modaveli:testIamPermissions [none]
+[debug] [2026-04-29T18:31:45.285Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/modaveli:testIamPermissions  x-goog-user-project=modaveli
+[debug] [2026-04-29T18:31:45.285Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/modaveli:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-04-29T18:31:45.678Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/modaveli:testIamPermissions 200
+[debug] [2026-04-29T18:31:45.679Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/modaveli:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-04-29T18:31:45.681Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:45.682Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:45.682Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/modaveli [none]
+[debug] [2026-04-29T18:31:46.177Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/modaveli 200
+[debug] [2026-04-29T18:31:46.177Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/modaveli {"projectNumber":"106350303564","projectId":"modaveli","lifecycleState":"ACTIVE","name":"Modaveli","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-02-09T19:16:15.732293Z","parent":{"type":"organization","id":"985914470535"}}
+[info] 
+[info] === Serving from 'C:\Users\matia\OneDrive\Escritorio\Carlos\25-26\2Cuatri\SistemasDeInformacionII\Sistemas-Informacion-II-main'...
+[info] 
+[debug] [2026-04-29T18:31:46.184Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:46.184Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:46.184Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/modaveli/sites 
+[debug] [2026-04-29T18:31:47.610Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/modaveli/sites 200
+[debug] [2026-04-29T18:31:47.610Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/modaveli/sites {"sites":[{"name":"projects/modaveli/sites/modaveli","defaultUrl":"https://modaveli.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2026-04-29T18:31:47.610Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:47.610Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:47.610Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/modaveli/webApps/-/config [none]
+[debug] [2026-04-29T18:31:48.440Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/modaveli/webApps/-/config 200
+[debug] [2026-04-29T18:31:48.440Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/modaveli/webApps/-/config {"projectId":"modaveli","appId":"1:106350303564:web:df06bc0bc151246172d7e9","storageBucket":"modaveli.firebasestorage.app","apiKey":"AIzaSyCQuTwh0_X6Epy3WaEPIMSj8mkCIqBs-XQ","authDomain":"modaveli.firebaseapp.com","messagingSenderId":"106350303564","projectNumber":"106350303564","version":"2"}
+[debug] [2026-04-29T18:31:48.471Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:48.471Z] Checked if tokens are valid: true, expires at: 1777490608694
+[debug] [2026-04-29T18:31:48.473Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/modaveli [none]
+[debug] [2026-04-29T18:31:48.846Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/modaveli 200
+[debug] [2026-04-29T18:31:48.847Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/modaveli {"projectId":"modaveli","projectNumber":"106350303564","displayName":"Modaveli","name":"projects/modaveli","resources":{"hostingSite":"modaveli"},"state":"ACTIVE","etag":"1_90d8ef56-ac99-46a2-af00-e1f0d67a11bd"}
+[info] +  hosting[modaveli]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [29/Apr/2026:18:32:07 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [29/Apr/2026:18:32:07 +0000] \"GET / HTTP/1.1\" 404 139 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [29/Apr/2026:18:32:23 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [29/Apr/2026:18:32:23 +0000] \"GET / HTTP/1.1\" 404 139 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}
